@@ -1,21 +1,52 @@
-import fetch from 'node-fetch'
-import { youtubeSearch } from '@bochilteam/scraper'
+import { youtubeSearch, youtubedl, youtubedlv2, youtubedlv3 } from '@bochilteam/scraper' 
+import fetch from "node-fetch"
+import yts from 'yt-search'
 let handler = async (m, { conn, command, text, usedPrefix }) => {
+let q, v, yt, dl_url, ttl, size, lolhuman, lolh, n, n2, n3, n4, cap, qu, currentQuality
+	let fkontak = { "key": { "participants":"0@s.whatsapp.net", "remoteJid": "status@broadcast", "fromMe": false, "id": "Halo" }, "message": { "contactMessage": { "vcard": `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\nFN:y\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD` }}, "participant": "0@s.whatsapp.net" }
+	if (!text) throw `${lenguajeGB['smsAvisoMG']()}𝙀𝙎𝘾𝙍𝙄𝘽𝘼 𝙀𝙇 𝙉𝙊𝙈𝘽𝙍𝙀 𝙊 𝙏𝙄𝙏𝙐𝙇𝙊\n𝙀𝙅𝙀𝙈𝙋𝙇𝙊\n*${usedPrefix + command} Billie Eilish - Bellyache*\n\n𝙒𝙍𝙄𝙏𝙀 𝙏𝙃𝙀 𝙉𝘼𝙈𝙀 𝙊𝙍 𝙏𝙄𝙏𝙇𝙀\n𝙀𝙓𝘼𝙈𝙋𝙇𝙀\n*${usedPrefix + command} Billie Eilish - Bellyache*`
+	let vid = (await yts(text)).all[0]
+let { title, description, publishedTime, url, thumbnail, videoId, timestamp, views, published } = vid
 try {
-let fkontak = { "key": { "participants":"0@s.whatsapp.net", "remoteJid": "status@broadcast", "fromMe": false, "id": "Halo" }, "message": { "contactMessage": { "vcard": `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\nFN:y\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD` }}, "participant": "0@s.whatsapp.net" }
-let grupos = [nn, nnn, nnnt]
-let gata = [img5, img6, img7, img8, img9]
-let enlace = { contextInfo: { externalAdReply: {title: wm + ' 🐈', body: 'support group' , sourceUrl: grupos.getRandom(), thumbnail: await(await fetch(gata.getRandom())).buffer() }}}
-let enlace2 = { contextInfo: { externalAdReply: { showAdAttribution: true, mediaUrl: yt, mediaType: 'VIDEO', description: '', title: wm, body: '😻 𝗦𝘂𝗽𝗲𝗿 𝗚𝗮𝘁𝗮𝗕𝗼𝘁-𝗠𝗗 - 𝗪𝗵𝗮𝘁𝘀𝗔𝗽𝗽 ', thumbnailUrl: await(await fetch(img)).buffer(), sourceUrl: yt }}}
-let dos = [enlace, enlace2]
+if (command == 'play') {	
+conn.sendFile(m.chat, thumbnail, 'thumbnail.jpg', `*𓆩 𓃠 𓆪 ✧═══ ${vs} ═══✧ 𓆩 𓃠 𓆪*
 
-if (!text) throw `${lenguajeGB['smsAvisoMG']()}𝙀𝙎𝘾𝙍𝙄𝘽𝘼 𝙀𝙇 𝙉𝙊𝙈𝘽𝙍𝙀 𝙊 𝙏𝙄𝙏𝙐𝙇𝙊\n𝙀𝙅𝙀𝙈𝙋𝙇𝙊\n*${usedPrefix + command} Billie Eilish - Bellyache*\n\n𝙒𝙍𝙄𝙏𝙀 𝙏𝙃𝙀 𝙉𝘼𝙈𝙀 𝙊𝙍 𝙏𝙄𝙏𝙇𝙀\n𝙀𝙓𝘼𝙈𝙋𝙇𝙀\n*${usedPrefix + command} Billie Eilish - Bellyache*`
-let vid = (await youtubeSearch(text)).video[0]
-if (!vid) throw `${lenguajeGB['smsAvisoFG']()}𝙉𝙊 𝙎𝙀 𝙋𝙐𝘿𝙊 𝙀𝙉𝘾𝙊𝙉𝙏𝙍𝘼𝙍 𝙀𝙇 𝘼𝙐𝘿𝙄𝙊/𝙑𝙄𝘿𝙀𝙊. 𝙄𝙉𝙏𝙀𝙉𝙏𝙀 𝘾𝙊𝙉 𝙊𝙏𝙍𝙊 𝙉𝙊𝙈𝘽𝙍𝙀 𝙊 𝙏𝙄𝙏𝙐𝙇𝙊\n\n𝙏𝙃𝙀 𝘼𝙐𝘿𝙄𝙊/𝙑𝙄𝘿𝙀𝙊 𝘾𝙊𝙐𝙇𝘿 𝙉𝙊𝙏 𝘽𝙀 𝙁𝙊𝙐𝙉𝘿. 𝙏𝙍𝙔 𝘼𝙉𝙊𝙏𝙃𝙀𝙍 𝙉𝘼𝙈𝙀 𝙊𝙍 𝙏𝙄𝙏𝙇𝙀`
-let { title, description, thumbnail, videoId, durationH, viewH, publishedTime } = vid
-const url = 'https://www.youtube.com/watch?v=' + videoId
- 
-await conn.sendButton(m.chat, wm, `*𓆩 𓃠 𓆪 ✧═══ ${vs} ═══✧ 𓆩 𓃠 𓆪*
+ও *TÍTULO | TITLE*
+» ${title} 
+﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘
+ও *DESCRIPCIÓN | DESCRIPTION*
+» ${description}
+﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘
+ও *DURACIÓN | DURATION*
+» ${timestamp}
+﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘
+ও *VISTAS | VIEWS*
+» ${views}
+﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘
+ও *URL*
+» ${url}
+
+*𓆩 𓃠 𓆪 ✧═══ ${vs} ═══✧ 𓆩 𓃠 𓆪*`.trim(), fkontak, m)
+q = '128kbps'
+v = url
+yt = await youtubedl(v).catch(async () => await youtubedlv2(v)).catch(async () => await youtubedlv3(v))
+dl_url = await yt.audio[q].download()
+title = await yt.title
+size = await yt.audio[q].fileSizeH
+await conn.sendMessage(m.chat, { audio: { url: dl_url }, mimetype: "audio/mp4", fileName: title + '.mp3', quoted: m, contextInfo: {
+'forwardingScore': 200,
+'isForwarded': false,
+externalAdReply:{
+showAdAttribution: false,
+title: `aqui esta tu perdido`,
+body: `${title}`,
+mediaType: 2, 
+sourceUrl: `${url}`,
+thumbnail: await (await fetch(thumbnail)).buffer()}}}, { quoted: m })
+//await conn.sendFile(m.chat, dl_url, title + '.mp3', null, m, false, { mimetype: 'audio/mp4' })
+}
+if (command == 'play2') {
+conn.sendFile(m.chat, thumbnail, 'thumbnail.jpg', `*𓆩 𓃠 𓆪 ✧═══ ${vs} ═══✧ 𓆩 𓃠 𓆪*
 
 ও *TÍTULO | TITLE*
 » ${title}
@@ -23,62 +54,30 @@ await conn.sendButton(m.chat, wm, `*𓆩 𓃠 𓆪 ✧═══ ${vs} ═══�
 ও *DESCRIPCIÓN | DESCRIPTION*
 » ${description}
 ﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘
-ও *PUBLICADO | PUBLISHED*
-» ${publishedTime}
+ও *DURACIÓN | DURATION*
+» ${timestamp}
 ﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘
-ও *DURACION | DURATION*
-» ${durationH}
-﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘
-ও *VISTAS| VIEWS*
-» ${viewH}
+ও *VISTAS | VIEWS*
+» ${views}
 ﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘﹘
 ও *URL*
 » ${url}
 
-*𓆩 𓃠 𓆪 ✧═══ ${vs} ═══✧ 𓆩 𓃠 𓆪*`, thumbnail, [['𝗠 𝗘 𝗡 𝗨 ☘️', '/menu']], m, dos.getRandom())
-  
-const sections = [{
-title: comienzo + ' 📡 𝗧𝗜𝗣𝗢𝗦 𝗗𝗘 𝗗𝗘𝗦𝗖𝗔𝗥𝗚𝗔𝗦 ' + fin,
-rows: [
-{title: "𓃠 𝗔 𝗨 𝗗 𝗜 𝗢 (Opcion 1)", rowId: `${usedPrefix}yta ${url}`, description: `${title}\n`},
-{title: "𓃠 𝗔 𝗨 𝗗 𝗜 𝗢 (Opcion 2)", rowId: `${usedPrefix}play.1 ${url}`, description: `${title}\n`},
-{title: "𓃠 𝗔 𝗨 𝗗 𝗜 𝗢   𝗗 𝗢 𝗖", rowId: `${usedPrefix}pdocaudio ${url}`, description: `${title}\n`},
-{title: "𓃠 𝗩 𝗜 𝗗 𝗘 𝗢 (Opcion 1)", rowId: `${usedPrefix}ytv ${url}`, description: `${title}\n`},
-{title: "𓃠 𝗩 𝗜 𝗗 𝗘 𝗢 (Opcion 2)", rowId: `${usedPrefix}play.2 ${url}`, description: `${title}\n`},
-{title: "𓃠 𝗩 𝗜 𝗗 𝗘 𝗢   𝗗 𝗢 𝗖", rowId: `${usedPrefix}pdocvieo ${url}`, description: `${title}\n`}
-]},{
-title: comienzo + ' 🔎 𝗕𝗨𝗦𝗤𝗨𝗘𝗗𝗔 𝗔𝗩𝗔𝗡𝗭𝗔𝗗𝗔 ' + fin,
-rows: [
-{title: "𓃠 𝗠 𝗔 𝗦   𝗥 𝗘 𝗦 𝗨 𝗟 𝗧 𝗔 𝗗 𝗢 𝗦", rowId: `${usedPrefix}ytsearch ${text}`}
-]}]
-
-const listMessage = {
-  text: `*𝙀𝙇𝙄𝙅𝘼 𝙌𝙐𝙀 𝙑𝘼 𝙃𝘼𝘾𝙀𝙍 𝘾𝙊𝙉  ${text}*`,
-  footer: global.wm,
-  title: `${htki} *♻️ 𝘿𝙀𝙎𝘾𝘼𝙍𝙂𝘼𝙎* ${htka}`,
-  buttonText: `🍄 𝙀𝙇𝙀𝙍𝙂𝙄𝙍 🍁`,
-  sections
+*𓆩 𓃠 𓆪 ✧═══ ${vs} ═══✧ 𓆩 𓃠 𓆪*`.trim(), fkontak, m)
+let qu = args[1] || '360'
+let q = qu + 'p'
+let v = args[0]
+const yt = await youtubedl(v).catch(async _ => await youtubedlv2(v)).catch(async _ => await youtubedlv3(v))
+const dl_url = await yt.video[q].download()
+const ttl = await yt.title
+const size = await yt.video[q].fileSizeH
+await await conn.sendMessage(m.chat, { video: { url: dl_url }, fileName: `${ttl}.mp4`, mimetype: 'video/mp4', caption: `╭━❰  ${wm}  ❱━⬣\n┃ 💜 𝙏𝙄𝙏𝙐𝙇𝙊 | 𝙏𝙄𝙏𝙇𝙀\n┃ ${ttl}\n┃┈┈┈┈┈┈┈┈┈┈┈┈┈\n┃ 💙 𝙋𝙀𝙎𝙊 | 𝙎𝙄𝙕𝙀\n┃ ${size}\n╰━━━━━❰ *𓃠 ${vs}* ❱━━━━⬣`, thumbnail: await fetch(yt.thumbnail) }, { quoted: m })
 }
-
-await conn.sendMessage(m.chat, listMessage, {quoted: fkontak})
-} catch {
-try {
-let vid2 = await (await fetch(`https://api.lolhuman.xyz/api/ytsearch?apikey=${lolkeysapi}&query=${text}`)).json()
-let { videoId, title, views, published, thumbnail } = await vid2.result[0]
-const url = 'https://www.youtube.com/watch?v=' + videoId
-let ytLink = await fetch(`https://api.lolhuman.xyz/api/ytplay2?apikey=${lolkeysapi}&query=${text}`)
-let jsonn = await ytLink.json()
-let aud = await jsonn.result.audio
-let capt = `ও *TÍTULO | TITLE:* ${title}\nও *PUBLICADO | PUBLISHED:* ${published}\nও *VISTAS| VIEWS:* ${views}\nও *URL:* ${url}`
-const buttons = [{buttonId: `#playlist ${title}`, buttonText: {displayText: '𓃠 𝗠 𝗔 𝗦   𝗥 𝗘 𝗦 𝗨 𝗟 𝗧 𝗔 𝗗 𝗢 𝗦'}, type: 1}]
-const buttonMessage = { image: {url: thumbnail}, caption: capt, footer: '*ᴇɴᴠɪᴀɴᴅᴏ ᴀᴜᴅɪᴏ, ᴀɢᴜᴀʀᴅᴇ ᴜɴ ᴍᴏᴍᴇɴᴛᴏ...*', buttons: buttons, headerType: 4 }
-let msg = await conn.sendMessage(m.chat, buttonMessage, { quoted: m })
-conn.sendMessage(m.chat, { audio: { url: aud }, mimetype: 'audio/mp4', fileName: `${title}.mp3`}, {quoted: msg})
-} catch {  
-throw '╰⊱❌⊱ *𝙁𝘼𝙇𝙇𝙊́ | 𝙀𝙍𝙍𝙊𝙍* ⊱❌⊱╮\n\n ERROR, SERVIDOR CAIDO, INTENTA DEL NUEVO POR FAVOR'}}}
+} catch (e) {
+}}
 handler.help = ['play', 'play2'].map(v => v + ' <pencarian>')
 handler.tags = ['downloader']
-handler.command = /^play2?$/i
+handler.command = ['play', 'play2']
 handler.limit = 1
-handler.level = 2
+
 export default handler

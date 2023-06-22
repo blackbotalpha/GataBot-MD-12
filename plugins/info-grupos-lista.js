@@ -1,13 +1,21 @@
-let handler = async (m, { conn }) => { 
-let txt = ''
-for (let [jid, chat] of Object.entries(conn.chats).filter(([jid, chat]) => jid.endsWith('@g.us') && chat.isChats)) txt += `\n🐈 ${await conn.getName(jid)}\n✦ ${jid} \n${chat?.metadata?.read_only ? '❌ *SIN ESTAR AQUÍ | NO*' : '✅ *SIGO AQUÍ | YES*'}\n\n`
-m.reply(`*${gt} ESTÁ EN ESTOS GRUPOS*
-*IS IN THESE GROUPS:*`.trim())
+import PhoneNumber from 'awesome-phonenumber'
+let handler = async (m, { conn, __dirname, isRowner, isOwner, isBotAdmin, usedPrefix, groupMetadata, groups, _package, participants }) => { 
+const fkontak = { "key": { "participants":"0@s.whatsapp.net", "remoteJid": "status@broadcast", "fromMe": false, "id": "Halo" }, "message": { "contactMessage": { "vcard": `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\nFN:y\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD` }}, "participant": "0@s.whatsapp.net"
+}
 
-conn.sendHydrated(m.chat, txt, wm, null, 'https://github.com/GataNina-Li/GataBot-MD', '𝙂𝙖𝙩𝙖𝘽𝙤𝙩-𝙈𝘿', null, null, [
-['𝙑𝙤𝙡𝙫𝙚𝙧 𝙖𝙡 𝙈𝙚𝙣𝙪́ | 𝘽𝙖𝙘𝙠 𝙩𝙤 𝙈𝙚𝙣𝙪 ☘️', '.menu'],
-['𝘾𝙪𝙚𝙣𝙩𝙖𝙨 𝙊𝙛𝙞𝙘𝙞𝙖𝙡𝙚𝙨 | 𝘼𝙘𝙘𝙤𝙪𝙣𝙩𝙨 ✅', '/cuentasgb']
-], m,)
+let txt
+const chats = Object.entries(conn.chats).filter(([jid, data]) => jid && data.isChats)
+groups = Object.values(await conn.groupFetchAllParticipating())
+txt = `${packname} ${lenguajeGB.smsLisA()}
+${lenguajeGB.smsLisB()} ${groups.length}\n`
+
+for (let i = 0; i < groups.length; i++) {
+txt += ` 
+${lenguajeGB.smsLisC()} ${groups[i].subject}
+${lenguajeGB.smsLisD()} ${groups[i].id}
+${isOwner ? `${lenguajeGB.smsLisE()} ${groups[i].participants.length}` : ''}\n\n`
+}
+m.reply(txt.trim())
 }
 handler.help = ['groups', 'grouplist']
 handler.tags = ['info']

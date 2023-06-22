@@ -1,12 +1,11 @@
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'; 
-import './config.js';
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';  
+import './config.js'; 
 import { createRequire } from "module"; 
 import path, { join } from 'path'
 import { fileURLToPath, pathToFileURL } from 'url'
 import { platform } from 'process'
 import * as ws from 'ws';
 import { readdirSync, statSync, unlinkSync, existsSync, readFileSync, rmSync, watch } from 'fs';
-/*import watch from 'glob-fs'*/
 import yargs from 'yargs';
 import { spawn } from 'child_process';
 import lodash from 'lodash';
@@ -15,12 +14,12 @@ import syntaxerror from 'syntax-error';
 import { tmpdir } from 'os';
 import { format } from 'util';
 import P from 'pino';
-//import pino from 'pino';
+import pino from 'pino';
 import { makeWASocket, protoType, serialize } from './lib/simple.js';
 import { Low, JSONFile } from 'lowdb';
 import { mongoDB, mongoDBV2 } from './lib/mongoDB.js';
 import store from './lib/store.js'
-const { DisconnectReason, useMultiFileAuthState } = await import('@adiwajshing/baileys')
+const { DisconnectReason, useMultiFileAuthState, MessageRetryMap, fetchLatestBaileysVersion } = await import('@adiwajshing/baileys')
 const { CONNECTING } = ws
 const { chain } = lodash
 const PORT = process.env.PORT || process.env.SERVER_PORT || 3000
@@ -37,7 +36,7 @@ global.timestamp = { start: new Date }
 const __dirname = global.__dirname(import.meta.url)
 
 global.opts = new Object(yargs(process.argv.slice(2)).exitProcess(false).parse())
-global.prefix = new RegExp('^[' + (opts['prefix'] || 'xzXZ/i!#$%+£¢€¥^°=¶∆×÷π√✓©®:;?&.\\-HhhHBb.aA').replace(/[|\\{}()[\]^$+*?.\-\^]/g, '\\$&') + ']')
+global.prefix = new RegExp('^[' + (opts['prefix'] || '*/i!#$%+£¢€¥^°=¶∆×÷π√✓©®:;?&.\\-.@').replace(/[|\\{}()[\]^$+*?.\-\^]/g, '\\$&') + ']')
 
 global.db = new Low(/https?:\/\//.test(opts['db'] || '') ? new cloudDBAdapter(opts['db']) : new JSONFile(`${opts._[0] ? opts._[0] + '_' : ''}database.json`))
 
@@ -66,15 +65,61 @@ global.db.chain = chain(global.db.data)
 }
 loadDatabase()
 
+/*------------------------------------------------*/
+
+global.chatgpt = new Low(new JSONFile(path.join(__dirname, "/db/chatgpt.json")));
+global.loadChatgptDB = async function loadChatgptDB() {
+if (global.chatgpt.READ)
+return new Promise((resolve) =>
+setInterval(async function () {
+if (!global.chatgpt.READ) {
+clearInterval(this);
+resolve( global.chatgpt.data === null ? global.loadChatgptDB() : global.chatgpt.data );
+}}, 1 * 1000));
+if (global.chatgpt.data !== null) return;
+global.chatgpt.READ = true;
+await global.chatgpt.read().catch(console.error);
+global.chatgpt.READ = null;
+global.chatgpt.data = {
+users: {},
+...(global.chatgpt.data || {}),
+};
+global.chatgpt.chain = lodash.chain(global.chatgpt.data);
+};
+loadChatgptDB();
+
+/*------------------------------------------------*/
+
 global.authFile = `GataBotSession`
 const { state, saveState, saveCreds } = await useMultiFileAuthState(global.authFile)
+const msgRetryCounterMap = MessageRetryMap => { }
+let { version } = await fetchLatestBaileysVersion();
 
 const connectionOptions = {
 printQRInTerminal: true,
+patchMessageBeforeSending: (message) => {
+const requiresPatch = !!( message.buttonsMessage || message.templateMessage || message.listMessage );
+if (requiresPatch) { message = { viewOnceMessage: { message: { messageContextInfo: { deviceListMetadataVersion: 2, deviceListMetadata: {}, }, ...message, },},};}
+return message;},
+getMessage: async (key) => {
+if (store) {
+const msg = await store.loadMessage(key.remoteJid, key.id)
+return msg.message || undefined }
+return { conversation: "hello, i'm GataBot-MD" }},   
+msgRetryCounterMap,
+logger: pino({ level: 'silent' }),
 auth: state,
-logger: P({ level: 'silent'}),
-browser: ['GataBot-MD','Edge','1.0.0']
-}
+browser: ['GataBot-MD','Edge','1.0.0'],
+version   
+}       
+       
+//getMessage: async (key) => ( opts.store.loadMessage(/** @type {string} */(key.remoteJid), key.id) || opts.store.loadMessage(/** @type {string} */(key.id)) || {} ).message || { conversation: 'Please send messages again' },   
+/*msgRetryCounterMap,
+logger: pino({ level: 'silent' }),
+auth: state,
+browser: ['GataBot-MD','Edge','107.0.1418.26'],
+version   
+}*/
 
 global.conn = makeWASocket(connectionOptions)
 conn.isInit = false
@@ -82,23 +127,79 @@ conn.isInit = false
 if (!opts['test']) {
 if (global.db) setInterval(async () => {
 if (global.db.data) await global.db.write()
-if (opts['autocleartmp'] && (global.support || {}).find) (tmp = [os.tmpdir(), 'tmp'], tmp.forEach(filename => cp.spawn('find', [filename, '-amin', '3', '-type', 'f', '-delete'])))
-}, 1000 * 900)}
+if (opts['autocleartmp'] && (global.support || {}).find) (tmp = [os.tmpdir(), 'tmp', "GataJadiBot"], tmp.forEach(filename => cp.spawn('find', [filename, '-amin', '4', '-type', 'f', '-delete'])))
+}, 30 * 1000)}
 
 if (opts['server']) (await import('./server.js')).default(global.conn, PORT)
-
+       
 function clearTmp() {
 const tmp = [tmpdir(), join(__dirname, './tmp')]
 const filename = []
 tmp.forEach(dirname => readdirSync(dirname).forEach(file => filename.push(join(dirname, file))))
 return filename.map(file => {
 const stats = statSync(file)
-if (stats.isFile() && (Date.now() - stats.mtimeMs >= 1000 * 900)) return unlinkSync(file) // 15 minutes
-return false
-})}
+if (stats.isFile() && (Date.now() - stats.mtimeMs >= 1000 * 60 * 4)) return unlinkSync(file) // 4 minutes
+return false })}
+
+function purgeSession() {
+let prekey = []
+let directorio = readdirSync("./GataBotSession")
+let filesFolderPreKeys = directorio.filter(file => {
+return file.startsWith('pre-key-') || file.startsWith('session-') || file.startsWith('sender-') || file.startsWith('app-')
+})
+prekey = [...prekey, ...filesFolderPreKeys]
+filesFolderPreKeys.forEach(files => {
+unlinkSync(`./GataBotSession/${files}`)
+})
+} 
+
+function purgeSessionSB() {
+try {
+let listaDirectorios = readdirSync('./GataJadiBot/');
+//console.log(listaDirectorios) Nombra las carpetas o archivos
+let SBprekey = []
+listaDirectorios.forEach(directorio => {
+if (statSync(`./GataJadiBot/${directorio}`).isDirectory()) {
+let DSBPreKeys = readdirSync(`./GataJadiBot/${directorio}`).filter(fileInDir => {
+return fileInDir.startsWith('pre-key-') || fileInDir.startsWith('app-') || fileInDir.startsWith('session-')
+})
+SBprekey = [...SBprekey, ...DSBPreKeys]
+DSBPreKeys.forEach(fileInDir => {
+unlinkSync(`./GataJadiBot/${directorio}/${fileInDir}`)
+})
+}
+})
+if (SBprekey.length === 0) {
+console.log(chalk.bold.green(lenguajeGB.smspurgeSessionSB1()))
+} else {
+console.log(chalk.bold.cyanBright(lenguajeGB.smspurgeSessionSB2()))
+}} catch (err){
+console.log(chalk.bold.red(lenguajeGB.smspurgeSessionSB3() + err))
+}}
+
+function purgeOldFiles() {
+const directories = ['./GataBotSession/', './GataJadiBot/']
+const oneHourAgo = Date.now() - (1000 * 60 * 30) //30 min 
+directories.forEach(dir => {
+readdirSync(dir, (err, files) => {
+if (err) throw err
+files.forEach(file => {
+const filePath = path.join(dir, file)
+stat(filePath, (err, stats) => {
+if (err) throw err;
+if (stats.isFile() && stats.mtimeMs < oneHourAgo && file !== 'creds.json') { 
+unlinkSync(filePath, err => {  
+if (err) throw err
+console.log(chalk.bold.green(`${lenguajeGB.smspurgeOldFiles1()} ${file} ${lenguajeGB.smspurgeOldFiles2()}`))
+})
+} else {  
+console.log(chalk.bold.red(`${lenguajeGB.smspurgeOldFiles3()} ${file} ${lenguajeGB.smspurgeOldFiles4()}` + err))
+} }) }) }) })
+}
 
 async function connectionUpdate(update) {
 const { connection, lastDisconnect, isNewLogin } = update
+global.stopped = connection    
 if (isNewLogin) conn.isInit = true
 const code = lastDisconnect?.error?.output?.statusCode || lastDisconnect?.error?.output?.payload?.statusCode
 if (code && code !== DisconnectReason.loggedOut && conn?.ws.readyState !== CONNECTING) {
@@ -107,12 +208,11 @@ global.timestamp.connect = new Date
 }
 if (global.db.data == null) loadDatabase()
 if (update.qr != 0 && update.qr != undefined) {
-console.log(chalk.yellow(lenguajeGB['smsCodigoQR']()))}  
+console.log(chalk.bold.yellow(lenguajeGB['smsCodigoQR']()))}  
 if (connection == 'open') {
-console.log(chalk.yellow(lenguajeGB['smsConexion']()))
-await conn.groupAcceptInvite(global.nna2)}
+console.log(chalk.bold.yellow(lenguajeGB['smsConexion']()))}
 if (connection == 'close') {
-console.log(chalk.yellow(lenguajeGB['smsConexionOFF']()))}}
+console.log(chalk.bold.yellow(lenguajeGB['smsConexionOFF']()))}}
 
 process.on('uncaughtException', console.error)
 
@@ -159,6 +259,15 @@ conn.onDelete = handler.deleteUpdate.bind(global.conn)
 conn.onCall = handler.callUpdate.bind(global.conn)
 conn.connectionUpdate = connectionUpdate.bind(global.conn)
 conn.credsUpdate = saveCreds.bind(global.conn, true)
+
+const currentDateTime = new Date();
+const messageDateTime = new Date(conn.ev);
+if (currentDateTime >= messageDateTime) {
+    let chats = Object.entries(conn.chats).filter(([jid, chat]) => !jid.endsWith('@g.us') && chat.isChats).map(v => v[0])
+  //console.log(chats, conn.ev); 
+} else {
+    let chats = Object.entries(conn.chats).filter(([jid, chat]) => !jid.endsWith('@g.us') && chat.isChats).map(v => v[0])}
+ //console.log(chats, 'Omitiendo mensajes en espera.'); }
 
 conn.ev.on('messages.upsert', conn.handler)
 conn.ev.on('group-participants.update', conn.participantsUpdate)
@@ -235,9 +344,20 @@ let s = global.support = { ffmpeg, ffprobe, ffmpegWebp, convert, magick, gm, fin
 Object.freeze(global.support)
 }
 setInterval(async () => {
-var a = await clearTmp()    
-console.log(chalk.cyanBright(lenguajeGB['smsClearTmp']()))
-}, 900000) //15 min
+if (stopped == 'close') return
+var a = await clearTmp()        
+console.log(chalk.bold.cyanBright(lenguajeGB.smsClearTmp()))}, 1000 * 60 * 4) 
+
+setInterval(async () => {
+await purgeSession()
+console.log(chalk.bold.cyanBright(lenguajeGB.smspurgeSession()))}, 1000 * 60 * 30)
+
+setInterval(async () => {
+await purgeSessionSB()}, 1000 * 60 * 30)
+
+setInterval(async () => {
+await purgeOldFiles()
+console.log(chalk.bold.cyanBright(lenguajeGB.smspurgeOldFiles()))}, 1000 * 60 * 30)
 _quickTest()
-.then(() => conn.logger.info(lenguajeGB['smsCargando']()))
+.then(() => conn.logger.info(chalk.bold(lenguajeGB['smsCargando']())))
 .catch(console.error)

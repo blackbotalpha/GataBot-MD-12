@@ -1,7 +1,8 @@
 import { canLevelUp, xpRange } from '../lib/levelling.js'
 import { levelup } from '../lib/canvas.js'
 export function before(m, { conn }) {
-//if (!db.data.chats[m.chat].autonivel && m.isGroup) throw 
+//if (!db.data.chats[m.chat].autonivel && m.isGroup) throw
+let fkontak = { "key": { "participants":"0@s.whatsapp.net", "remoteJid": "status@broadcast", "fromMe": false, "id": "Halo" }, "message": { "contactMessage": { "vcard": `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\nFN:y\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD` }}, "participant": "0@s.whatsapp.net" }
 let who = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender
 let mentionedJid = [who]
 let username = conn.getName(who)
@@ -14,15 +15,23 @@ return !0
 let before = user.level * 1
 while (canLevelUp(user.level, user.exp, global.multiplier)) user.level++
  if (before !== user.level) {
-	  	 
-conn.sendButton(m.chat, '🐈 ' + wm, `*╭━⊰ ${username} ⊱━დ*
+
+ conn.reply(m.chat, `*╭━⊰ ${username} ⊱━დ*
 *┃ ${lenguajeGB.smsAutoLv2()} ${before}*
 *┃ ${lenguajeGB.smsAutoLv3()} ${user.level}*
 *┃ ${lenguajeGB.smsAutoLv4()}* ${user.role}
 *┃ ${lenguajeGB.smsAutoLv5()} ${new Date().toLocaleString('id-ID')}*
 *╰━⊰ ${lenguajeGB.smsAutoLv1()} ⊱━━დ*
 
-*_${lenguajeGB.smsAutoLv6()}_*`, null, [[lenguajeGB.smsConMenu(), `/menu`]], m)
+*_${lenguajeGB.smsAutoLv6()}_*`, fkontak, m)  		  	 
+/*conn.sendButton(m.chat, '🐈 ' + wm, `*╭━⊰ ${username} ⊱━დ*
+*┃ ${lenguajeGB.smsAutoLv2()} ${before}*
+*┃ ${lenguajeGB.smsAutoLv3()} ${user.level}*
+*┃ ${lenguajeGB.smsAutoLv4()}* ${user.role}
+*┃ ${lenguajeGB.smsAutoLv5()} ${new Date().toLocaleString('id-ID')}*
+*╰━⊰ ${lenguajeGB.smsAutoLv1()} ⊱━━დ*
+
+*_${lenguajeGB.smsAutoLv6()}_*`, null, [[lenguajeGB.smsConMenu(), `/menu`]], m)*/
 
 
 let especial = ['limit', 'diamond', 'joincount', 'emerald', 'berlian', 'kyubi', 'gold', 'money', 'tiketcoin', 'stamina'].getRandom()
@@ -221,6 +230,17 @@ user[especial4] += especialCant4 * 7
 	
 }else if (user.level == 85){
 m.reply(`*${lenguajeGB.smsAutoLv7()} 85!!* 🏆
+𓃠 *${especialCant * 7} ${global.rpgshop.emoticon(especial)}*
+𓃠 *${especialCant2 * 7} ${global.rpgshop.emoticon(especial2)}*
+𓃠 *${especialCant3 * 7} ${global.rpgshop.emoticon(especial3)}*
+𓃠 *${especialCant4 * 7} ${global.rpgshop.emoticon(especial4)}*`)
+user[especial] += especialCant * 7
+user[especial2] += especialCant2 * 7
+user[especial3] += especialCant3 * 7
+user[especial4] += especialCant4 * 7
+	
+}else if (user.level == 90){
+m.reply(`*${lenguajeGB.smsAutoLv7()} 90!!* 🏆
 𓃠 *${especialCant * 8} ${global.rpgshop.emoticon(especial)}*
 𓃠 *${especialCant2 * 8} ${global.rpgshop.emoticon(especial2)}*
 𓃠 *${especialCant3 * 8} ${global.rpgshop.emoticon(especial3)}*
@@ -229,17 +249,6 @@ user[especial] += especialCant * 8
 user[especial2] += especialCant2 * 8
 user[especial3] += especialCant3 * 8
 user[especial4] += especialCant4 * 8
-	
-}else if (user.level == 90){
-m.reply(`*${lenguajeGB.smsAutoLv7()} 90!!* 🏆
-𓃠 *${especialCant * 9} ${global.rpgshop.emoticon(especial)}*
-𓃠 *${especialCant2 * 9} ${global.rpgshop.emoticon(especial2)}*
-𓃠 *${especialCant3 * 9} ${global.rpgshop.emoticon(especial3)}*
-𓃠 *${especialCant4 * 9} ${global.rpgshop.emoticon(especial4)}*`)
-user[especial] += especialCant * 9
-user[especial2] += especialCant2 * 9
-user[especial3] += especialCant3 * 9
-user[especial4] += especialCant4 * 9
 	
 }else if (user.level == 95){
 m.reply(`*${lenguajeGB.smsAutoLv7()} 95!!* 🏆
@@ -264,13 +273,7 @@ user[especial3] += especialCant3 * 10
 user[especial4] += especialCant4 * 10
 	
 }else{	
-m.reply(`*${lenguajeGB.smsAutoLv7()} ${user.level}!!* 🎉
-𓃠 *${normalCant * 1} ${global.rpgshop.emoticon(normal)}*
-𓃠 *${normalCant2 * 1} ${global.rpgshop.emoticon(normal2)}*
-𓃠 *${normalCant3 * 1} ${global.rpgshop.emoticon(normal3)}*`)
-user[normal] += normalCant * 1
-user[normal2] += normalCant2 * 1
-user[normal3] += normalCant3 * 1
+	
 }
 	 
 }}		
